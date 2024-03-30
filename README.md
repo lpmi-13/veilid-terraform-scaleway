@@ -16,6 +16,8 @@ Once that's all set up, the easiest way to get those credentials ready for terra
 
 Then run `source .env` and the variables should be set up correctly in your shell.
 
+> If you want to use a separate SSH key, then generate one in this folder like `ssh-keygen -t ed25519 -o -a 100 -f veilid-key`. Then use that key in `setup-veilid.yaml`.
+
 After that, you should be ready to run `terraform init && terraform apply`.
 
 The IP addresses for the nodes will be at the bottom of the terraform output. They'll look something like:
