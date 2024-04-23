@@ -42,6 +42,8 @@ public_ipv6_address = [
 
 If you need to enabled IPv4 access for ssh, you can change the value for `needIpv4 = false` to `needIpv4 = true` in `main.tf`. Re-run `terraform apply` and you should see:
 
+> For some bizarre reason, you'll see a permanent diff every time you run `terraform apply` after enabling the IPv4 address, but it'll be working fine, so don't worry about that.
+
 ```sh
 Outputs:
 
