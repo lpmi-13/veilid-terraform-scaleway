@@ -17,13 +17,15 @@ You'll also need Terraform, so [this page](https://developer.hashicorp.com/terra
 
 ## Running the commands
 
-Once that's all set up, the easiest way to get those credentials ready for terraform is to just copy them into a local `.env` file. You can use the `.env.example` as a template. Copy in the values and then rename to `.env` (already set in the `.gitignore`).
+1. copy the API key values into a local `.env` file. You can use the `.env.example` as a template. Copy in the values and then rename to `.env` (already set in the `.gitignore`).
 
-Then run `source .env` and the variables should be set up correctly in your shell.
+2. Then run `source .env` and the variables should be set up correctly in your shell.
+
+3. Add your public ssh key contents to the `ssh_authorized_keys` section in `setup-veilid.yaml`. Skip this step if you don't care about SSH access to the node(s).
 
 > If you want to use a separate SSH key, then generate one in this folder like `ssh-keygen -t ed25519 -o -a 100 -f veilid-key`. Then use that key in `setup-veilid.yaml`.
 
-After that, you should be ready to run `terraform init && terraform apply`.
+4. After that, you should be ready to run `terraform init && terraform apply`.
 
 ## Connecting
 
@@ -38,7 +40,7 @@ public_ipv6_address = [
 ]
 ```
 
-If you need to enabled IPv4 access for ssh, you can change the value for `needIpv4 = false` to `needIpv4 = true` in `main.tf`.
+If you need to enabled IPv4 access for ssh, you can change the value for `needIpv4 = false` to `needIpv4 = true` in `main.tf`. Re-run `terraform apply` and you should see:
 
 ```sh
 Outputs:
@@ -51,4 +53,4 @@ public_ipv6_address = [
 ]
 ```
 
-You can access them via `ssh -i PATH_TO_PRIVATE_KEY veilid@PUBLIC_IP_ADDRESS`.
+You can access the node(s) via `ssh -i PATH_TO_PRIVATE_KEY veilid@PUBLIC_IP_ADDRESS`.
