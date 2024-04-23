@@ -2,6 +2,11 @@
 
 A quick and easy way to have one or more [veilid](https://veilid.com/) nodes bootstrapped and running in Scaleway.
 
+## Cost
+
+Scaleway is one of the more expensive options for running cheap instances, and the default configuration here will cost a little over $7/month. Since Scaleway charges for attached IPv4 addresses, we're not setting up one in the default configuration, but you can enable one if you need IPv4 access for SSH (see Connecting section below).
+
+
 ## Set up
 
 If you don't have a [Scaleway](https://www.scaleway.com) account, then sign up for one of those first.
@@ -20,13 +25,29 @@ Then run `source .env` and the variables should be set up correctly in your shel
 
 After that, you should be ready to run `terraform init && terraform apply`.
 
+## Connecting
+
 The IP addresses for the nodes will be at the bottom of the terraform output. They'll look something like:
 
 ```sh
 Outputs:
-public_ip_address = [
-  "51.159.183.201",
-  "51.159.140.208",
+
+public_ipv4_address = []
+public_ipv6_address = [
+  "2001:bc8:1210:1414::",
+]
+```
+
+If you need to enabled IPv4 access for ssh, you can change the value for `needIpv4 = false` to `needIpv4 = true` in `main.tf`.
+
+```sh
+Outputs:
+
+public_ipv4_address = [
+  "51.159.148.206",
+]
+public_ipv6_address = [
+  "2001:bc8:1202:e60c::1",
 ]
 ```
 

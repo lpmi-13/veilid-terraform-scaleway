@@ -1,7 +1,11 @@
 locals {
   # you can find your project ID at https://console.scaleway.com/project/settings
-  project_id     = "COPY_YOUR_PROJECT_ID_HERE"
+  project_id = "COPY_YOUR_PROJECT_ID_HERE"
+
   instance_count = 1
+
+  # change this to "true" if you want to configure an IPv4 address for SSH access
+  needIpv4 = false
 
   region = "fr-par"
   # available regions are:
@@ -34,7 +38,7 @@ terraform {
   required_providers {
     scaleway = {
       source  = "scaleway/scaleway"
-      version = ">= 2.37.0"
+      version = ">= 2.39.0"
     }
   }
   required_version = ">= 1.6"
@@ -45,49 +49,16 @@ provider "scaleway" {
   region = local.region
 }
 
-resource "scaleway_instance_ip" "public_ip" {
-  count      = local.instance_count
+resource "scaleway_instance_ip" "public_ipv4" {
+  count      = local.needIpv4 ? local.instance_count : 0
+  type       = "routed_ipv4"
   project_id = local.project_id
 }
 
-resource "scaleway_instance_security_group" "veilid" {
+resource "scaleway_instance_ip" "public_ipv6" {
+  count      = local.instance_count
+  type       = "routed_ipv6"
   project_id = local.project_id
-
-  name = "veilid-securitygroup"
-
-  inbound_default_policy  = "drop"
-  outbound_default_policy = "accept"
-
-  inbound_rule {
-    action   = "accept"
-    port     = "22"
-    ip_range = "0.0.0.0/0"
-  }
-
-  inbound_rule {
-    action   = "accept"
-    port     = "5151"
-    protocol = "TCP"
-  }
-
-  inbound_rule {
-    action   = "accept"
-    port     = "5151"
-    protocol = "UDP"
-  }
-
-  inbound_rule {
-    action   = "accept"
-    port     = "5150"
-    protocol = "TCP"
-  }
-
-  inbound_rule {
-    action   = "accept"
-    port     = "5150"
-    protocol = "UDP"
-  }
-
 }
 
 resource "scaleway_instance_server" "veilid" {
@@ -102,11 +73,22 @@ resource "scaleway_instance_server" "veilid" {
 
   tags = ["veilid"]
 
-  ip_id = scaleway_instance_ip.public_ip[count.index].id
+  ip_ids            = local.needIpv4 ? [scaleway_instance_ip.public_ipv4[count.index].id, scaleway_instance_ip.public_ipv6[count.index].id] : [scaleway_instance_ip.public_ipv6[count.index].id]
+  routed_ip_enabled = true
 
   security_group_id = scaleway_instance_security_group.veilid.id
 
   user_data = {
     cloud-init = file("./setup-veilid.yaml")
   }
+
+  root_volume {
+    # force a local volume instance of creating a new network attached drive
+    size_in_gb  = 10
+    volume_type = "l_ssd"
+  }
+
+  # adding this since terraform destroy might try to delete the security group before the instance,
+  # which will fail
+  depends_on = [scaleway_instance_security_group.veilid]
 }
