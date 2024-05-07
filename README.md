@@ -4,7 +4,7 @@ A quick and easy way to have one or more [veilid](https://veilid.com/) nodes boo
 
 ## Cost
 
-Scaleway is one of the more expensive options for running cheap instances, and the default configuration here will cost a little over $7/month. Since Scaleway charges for attached IPv4 addresses, we're not setting up one in the default configuration, but you can enable one if you need IPv4 access for SSH (see Connecting section below).
+Scaleway is one of the more expensive options for running cheap instances, and the default configuration here will cost a little over $7/month. Since Scaleway charges for attached IPv4 addresses (about $3/month), we're not setting up one in the default configuration, but you can enable one if you need IPv4 access for SSH (see Connecting section below).
 
 
 ## Set up
